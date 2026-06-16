@@ -8,7 +8,7 @@ static const char *const TAG = "sy6974";
 
 bool SY6974Component::read_all_registers_() {
   // Read all registers from 0x00 to 0x0A in one transaction (11 bytes)
-  if (!this->read_bytes(SY6974_REG_INPUT_CURRENT_LIMIT, this->data_.registers, SY6974_NUM_REGS)) {
+  if (!this->read_bytes(SY6974_REG_CONTROL0, this->data_.registers, SY6974_NUM_REGS)) {
     ESP_LOGW(TAG, "Failed to read registers 0x00-0x0A");
     return false;
   }
@@ -73,9 +73,6 @@ void SY6974Component::setup() {
   ESP_LOGV(TAG, "Setting charge enabled to %s", ONOFF(this->charge_enabled_));
   this->set_charge_enabled(this->charge_enabled_);
 
-  ESP_LOGV(TAG, "Setting ADC measurements to %s", ONOFF(this->enable_adc_));
-  this->set_enable_adc_measure(this->enable_adc_);
-
   ESP_LOGV(TAG, "SY6974 initialized successfully");
 }
 
@@ -87,10 +84,9 @@ void SY6974Component::dump_config() {
                 "  Charge Voltage: %u mV\n"
                 "  Charge Current: %u mA\n"
                 "  Precharge Current: %u mA\n"
-                "  Charge Enabled: %s\n"
-                "  ADC Enabled: %s",
+                "  Charge Enabled: %s",
                 ONOFF(this->led_enabled_), this->input_current_limit_, this->charge_voltage_, this->charge_current_,
-                this->precharge_current_, ONOFF(this->charge_enabled_), ONOFF(this->enable_adc_));
+                this->precharge_current_, ONOFF(this->charge_enabled_));
   LOG_I2C_DEVICE(this);
   LOG_UPDATE_INTERVAL(this);
   if (this->is_failed()) {
